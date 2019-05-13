@@ -1,5 +1,7 @@
 import java.util.Scanner;
 
+import static java.lang.System.exit;
+
 class Object {
     int x_left, x_right, y_left, y_right;
     int square;
@@ -68,7 +70,7 @@ public class Main {
                 }
                 System.out.println();
             }
-            System.exit(0);
+            exit(0);
             return;
         }
         if (lastX == N_size - 1 && lastY == M_size - 1) return; //end of the matrix
@@ -76,8 +78,7 @@ public class Main {
             for (int Y = 0; Y < M_size; Y++) {
                 if (X == lastX && Y <= lastY) continue;
                 if (used[X][Y] != 0) continue;
-                for (int i = 0; i <= N; i++)
-                {
+                for (int i = 0; i <= N; i++) {
                     if (i == N) { //i == N is for just leaving this cell free
                         recursion(remaining, N, X, Y);
                         continue;
@@ -87,8 +88,7 @@ public class Main {
                     if (objects[i].type == 2) { //if object's shape is determined
                         x_sz = objects[i].x_right - objects[i].x_left;
                         y_sz = objects[i].y_right - objects[i].y_left;
-                    }
-                    else { // otherwise
+                    } else { // otherwise
 
                         for (int mod = 1; mod * mod <= objects[i].square; mod++) { //choosing object's shape
                             if (objects[i].square % mod != 0) continue; //if other size is non-integer
@@ -222,6 +222,7 @@ public class Main {
         int N = in.nextInt(); //Scanning number of objects
 
         objects = new Object[N];
+        int sum_of_squares = 0;
         for (int i = 0; i < N; i++) {
             int type = in.nextInt(); //Scanning type of object:1 - typeA, 2 - typeB, 3 - typeC
             if (type != 1) { //if shape is determined - scanning it
@@ -229,6 +230,14 @@ public class Main {
                 int y_left = in.nextInt();
                 int x_right = in.nextInt();
                 int y_right = in.nextInt();
+                if (x_left >= x_right || y_left >= y_right) {
+                    System.out.println("Incorrect input in objects");
+                    return;
+                }
+                if (x_left < 0 || x_right > N_size || y_left < 0 || y_right > M_size) {
+                    System.out.println("Incorrect input in objects");
+                    return;
+                }
                 objects[i] = new Object(x_left, x_right, y_left, y_right, type, i + 1);
             } else { //else scanning square of object
                 int square = in.nextInt();
@@ -240,6 +249,20 @@ public class Main {
         for (int i = 0; i < N; i++) {
             for (int j = 0; j < N; j++) {
                 adj_matrix[i][j] = in.nextBoolean();
+            }
+        }
+        for (int i = 0; i < N; i++) {
+            if (adj_matrix[i][i] == true) {
+                System.out.println("Incorrect input in adjacency matrix");
+                exit(0);
+            }
+        }
+        for (int i = 0; i < N; i++) {
+            for (int j = i + 1; j < N; j++) {
+                if (adj_matrix[i][j] && adj_matrix[j][i]) {
+                    System.out.println("Incorrect input in adjacency matrix");
+                    exit(0);
+                }
             }
         }
         int counter = 0;
